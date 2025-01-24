@@ -34,8 +34,8 @@ varimpPlot<-function(d,cutoff){
     scale_color_viridis_c(na.value = "grey50")+
     theme(legend.position = "none")+
     scale_x_continuous(
-      breaks = seq(0, ceiling(max(d$MeanDecreaseGini)), by = 2),
-      limits = c(0, ceiling(max(d$MeanDecreaseGini)))
+      breaks = seq(from = 0, by = ceiling(floor(max(d$MeanDecreaseGini))/5), length.out = 6),
+      limits = c(0, max(seq(from = 0, by = ceiling(floor(max(d$MeanDecreaseGini))/5), length.out = 6)))
     )
   if(!missing(cutoff)){
     p<-p+geom_vline(xintercept = cutoff, color = "red",alpha=0.7, linetype = "dashed")
