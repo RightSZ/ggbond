@@ -28,3 +28,45 @@ iris.rf2 = randomForest(as.factor(Species)~.,data = iris,ntree=optionTrees)
 importance = importance(x=iris.rf2)
 varimpPlot(importance, cutoff=3)
 ```
+## Plot xvg from GROMACS
+1. Plotting RMSD (Root Mean Square Deviation)
+1.1 Single File
+```R
+rmsd_data <- read_xvg("./rmsd.xvg")
+PlotRMSD(rmsd_data)
+```
+1.2 Multiple Files
+```R
+rmsd_data <- read_xvg(c("./rmsd_A.xvg",  # Distinguished by filename
+                        "./rmsd_B.xvg",
+                        "./rmsd_C.xvg"))
+PlotRMSD(rmsd_data)
+```
+2. Plotting RMSF (Root Mean Square Fluctuation)
+2.1 Single File
+```R
+rmsf_data <- read_xvg("./rmsf.xvg")
+PlotRMSF(rmsf_data)
+```
+2.2 Multiple Files
+```R
+rmsf_data <- read_xvg(c("./rmsf_A.xvg",  # Distinguished by filename
+                        "./rmsf_B.xvg",
+                        "./rmsf_C.xvg"))
+PlotRMSF(rmsf_data)
+```
+3. Radius of Gyration
+```R
+gyrate_data <- read_xvg("./gyrate.xvg")
+PlotGyrate(gyrate_data)
+```
+4. Solvent Accessible Surface Area
+```R
+area_data <- read_xvg("./area.xvg")
+PlotArea(area_data)
+```
+5. Hydrogen Bonds
+```R
+hbonds_data <- read_xvg("./hbonds.xvg")
+PlotHbonds(hbonds_data)
+```
