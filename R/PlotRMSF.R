@@ -1,19 +1,15 @@
-#' @title Plot RMSD (from GROMACS) by ggplot2
-#' @description
-#' Draw a RMSD plot from GROMACS by ggplot2
+#' @title Plot RMSF (from GROMACS) by ggplot2
 #'
 #' @param data an object of class xvg from read_xvg function.\code{\link[ggbond]{read_xvg}}
 #'
 #' @returns a ggplot2 object
 #' @export
 #'
-#' @import ggplot2
-#' @examples
-#' \donttest{
-#' PlotRMSD(data)
+#' @examples{
+#' PlotRMSF(data)
 #' }
 #'
-PlotRMSD<-function(data){
+PlotRMSF<-function(data){
   require(ggplot2)
   d <- lapply(names(data), function(n) {
     df <- data[[n]]

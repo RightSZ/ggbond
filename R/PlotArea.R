@@ -1,19 +1,15 @@
-#' @title Plot RMSD (from GROMACS) by ggplot2
-#' @description
-#' Draw a RMSD plot from GROMACS by ggplot2
+#' @title Plot Area (from GROMACS) by ggplot2
 #'
 #' @param data an object of class xvg from read_xvg function.\code{\link[ggbond]{read_xvg}}
 #'
 #' @returns a ggplot2 object
 #' @export
 #'
-#' @import ggplot2
-#' @examples
-#' \donttest{
-#' PlotRMSD(data)
+#' @examples{
+#' PlotArea(data)
 #' }
 #'
-PlotRMSD<-function(data){
+PlotArea<-function(data){
   require(ggplot2)
   d <- lapply(names(data), function(n) {
     df <- data[[n]]
@@ -41,10 +37,15 @@ PlotRMSD<-function(data){
     cat("more than 1 title label, choose first label")
     title_labels <- title_labels[1]
   }
+  parse_sub_superscript <- function(label) {
+    parsed <- gsub(r"(\\S(.*?)\\N)", "^\\1", label)
+    parsed <- gsub(r"(\\s(.*?)\\N)", "[\\1]", parsed)
+    parse(text = parsed)
+  }
   d <- do.call(rbind,d)
   p<-ggplot(d, aes(x = !!sym(names(d)[1]), y = !!sym(names(d)[2]), color = Group)) +
     geom_line() +
-    labs(x = xaxis_labels, y = yaxis_labels, title = title_labels) +
+    labs(x = xaxis_labels, y = parse_superscript(yaxis_labels), title = title_labels) +
     scale_x_continuous(expand = c(0, 0)) +
     theme_bw() +
     scale_color_viridis_d() +
