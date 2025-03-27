@@ -30,26 +30,24 @@ varimpPlot(importance, cutoff=3)
 ```
 ## Plot xvg from GROMACS
 ### 1. Plotting RMSD (Root Mean Square Deviation)
-1.1 Single File
 ```R
+#Single File
 rmsd_data <- read_xvg("./rmsd.xvg")
 PlotRMSD(rmsd_data)
-```
-1.2 Multiple Files
-```R
+
+#Multiple Files
 rmsd_data <- read_xvg(c("./rmsd_A.xvg",  # Distinguished by filename
                         "./rmsd_B.xvg",
                         "./rmsd_C.xvg"))
 PlotRMSD(rmsd_data)
 ```
 ### 2. Plotting RMSF (Root Mean Square Fluctuation)
-2.1 Single File
 ```R
+#Single File
 rmsf_data <- read_xvg("./rmsf.xvg")
 PlotRMSF(rmsf_data)
-```
-2.2 Multiple Files
-```R
+
+#Multiple Files
 rmsf_data <- read_xvg(c("./rmsf_A.xvg",  # Distinguished by filename
                         "./rmsf_B.xvg",
                         "./rmsf_C.xvg"))
