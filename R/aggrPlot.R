@@ -13,6 +13,7 @@
 #' @import ggplot2
 #' @import patchwork
 #' @import tidyr
+#' @import dplyr
 #' @examples
 #' \donttest{
 #' aggrPlot(d, col_replace=TRUE)
