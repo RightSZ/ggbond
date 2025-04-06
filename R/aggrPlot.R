@@ -27,7 +27,7 @@ aggrPlot<-function(d, col_replace=TRUE){
   h <- d[["tabcomb"]][order(d[["count"]], decreasing = T), ]
   if(!is.matrix(h)) h <- matrix(h,ncol = length(h))
   colnames(h) <- d[["missings"]][["Variable"]]
-  h <- as.data.frame(h) %>%
+  h <- as.data.frame(h) |>
     mutate(y = rownames(.)) |>
     pivot_longer(cols = -y, names_to = "x", values_to = "value")
   h$x<-factor(h$x,levels=d[["missings"]][["Variable"]])
