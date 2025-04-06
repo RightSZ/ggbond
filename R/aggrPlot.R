@@ -10,10 +10,10 @@
 #'
 #' @importFrom reshape2 melt
 #' @importFrom stringr str_replace_all
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr mutate
 #' @import ggplot2
 #' @import patchwork
-#' @import tidyr
-#' @import dplyr
 #' @examples
 #' \donttest{
 #' aggrPlot(d, col_replace=TRUE)
