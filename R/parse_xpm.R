@@ -84,9 +84,6 @@ parse_xpm <- function(xpm_content) {
     color_map[[color_code]] <- hex_color  # Store color mapping
     color_values[[color_code]] <- value   # Store value mapping
   }
-
-  # ... (remaining code comments are translated in same pattern) ...
-
   return(list(
     data = df,           # Data frame with coordinates and values
     title = title,       # Plot title

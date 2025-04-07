@@ -15,6 +15,7 @@
 #'       \title Fixed aspect ratio based on data dimensions
 #'     }
 #' }
+#' @import ggplot2
 #' @examples
 #' # Basic plot without interpolation
 #' PlotXpm(data)
