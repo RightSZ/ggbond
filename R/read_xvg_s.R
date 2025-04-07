@@ -4,7 +4,6 @@
 #' @param col_names column names. (If not provided, the default column names will be used.)
 #'
 #' @returns a data.frame
-#' @export
 #'
 #' @examples
 #' \donttest{

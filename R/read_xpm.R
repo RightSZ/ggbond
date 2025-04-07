@@ -4,6 +4,7 @@
 #' @return A list of parsed results where each element corresponds to a file,
 #'         named by the file's base name. Each element contains the same
 #'         structure as returned by parse_xpm()
+#' @export
 #' @details This function:
 #' \itemize{
 #'   \item Validates input type and file existence

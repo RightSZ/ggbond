@@ -3,6 +3,7 @@
 #' @param dat List object returned by xpm_files function
 #' @param interpolate Logical indicating whether to use interpolation for rendering (default: FALSE)
 #' @return ggplot object ready for display or further customization
+#' @export
 #' @details
 #' \itemize{
 #'   \item Uses geom_raster() with interpolation for smooth gradients when interpolate=TRUE
