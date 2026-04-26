@@ -28,7 +28,7 @@ From the package directory:
 
 ``` r
 install.packages("devtools")
-devtools::install("RightSZ/ggbond")
+devtools::install_github("RightSZ/ggbond")
 ```
 
 ## Quick Start
