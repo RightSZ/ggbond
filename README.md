@@ -20,7 +20,6 @@ canvas and the final graphics device.
 -   Lock the aspect ratio for image panels.
 -   Optionally draw panel borders in the rendered output.
 -   Export the current layout to PDF or PNG.
--   Stop the Shiny app automatically when the browser session closes.
 
 ## Installation
 
@@ -35,7 +34,6 @@ devtools::install_github("RightSZ/ggbond")
 
 ``` r
 library(ggbond)
-
 run_ggbond()
 ```
 
@@ -94,8 +92,6 @@ run_ggbond(plots)
     preview.
 7.  Export the layout with **Export PDF** or **Export PNG**.
 
-Closing the browser session stops the Shiny app so the R console can be
-used again.
 
 ## Notes
 
