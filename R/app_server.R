@@ -384,6 +384,7 @@ ggbond_server <- function(
         )
       )
     })
+    shiny::outputOptions(output, "panel_inspector", suspendWhenHidden = FALSE)
 
     observeEvent(input$align_left, {
       session$sendCustomMessage("align_selected_panels", list(mode = "left"))

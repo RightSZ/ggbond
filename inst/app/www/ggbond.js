@@ -277,6 +277,9 @@ let panelCounter = 0;
         let collapsed = shell.classList.toggle('is-collapsed');
         e.target.textContent = collapsed ? 'Show' : 'Hide';
         e.target.title = collapsed ? 'Show panel inspector' : 'Hide panel inspector';
+        if (!collapsed) {
+          syncSelectionInputs();
+        }
       });
 
       function moveSelectedPanels(dx, dy) {
