@@ -1,6 +1,6 @@
 Package: ggbond
 Title: Interactive Layout Editor for R Plots
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(
         given = "BeiHao",
