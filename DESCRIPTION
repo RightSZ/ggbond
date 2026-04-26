@@ -1,16 +1,18 @@
 Package: ggbond
 Title: Interactive Layout Editor for R Plots
 Version: 0.0.0.9000
-Authors@R: c(
-    person("ggbond", "Authors", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: 
+    person(
+        given = "BeiHao",
+        family = "Li",
+        role = c("aut", "cre", "cph"),
+        email = "szright2000@gmail.com"
     )
-Author: ggbond Authors
-Maintainer: ggbond Authors <first.last@example.com>
 Description: Provides a Shiny-based layout editor for arranging R plot objects
     on a fixed-size canvas. It supports ggplot2 plots, base graphics functions
     and recorded plots, pheatmap objects, ComplexHeatmap objects, grid grobs,
     gtables, and local raster images, with live preview and PDF or PNG export.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
