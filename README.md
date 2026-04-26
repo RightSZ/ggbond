@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # ggbond
 
 ggbond is a Shiny-based layout editor for arranging R plots on a
@@ -35,12 +29,6 @@ From the package directory:
 ``` r
 install.packages("devtools")
 devtools::install("ggbond")
-```
-
-During development, you can load the package without installing:
-
-``` r
-devtools::load_all("ggbond")
 ```
 
 ## Quick Start
