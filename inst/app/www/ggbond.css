@@ -1,0 +1,206 @@
+:root {
+  --primary-color: #3b82f6; /* Modern Blue */
+  --primary-bg: rgba(59, 130, 246, 0.1);
+  --primary-border: rgba(59, 130, 246, 0.5);
+  
+  --selected-color: #f59e0b; /* Amber */
+  --selected-bg: rgba(245, 158, 11, 0.15);
+  --selected-border: #f59e0b;
+  
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  
+  --text-main: #334155;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  --radius-md: 8px;
+  --radius-sm: 4px;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+#canvas {
+  position: relative;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-top: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  
+  /* Add a subtle grid to make visual alignment easier. */
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.panel-box {
+  position: absolute;
+  border: 1px solid var(--primary-border);
+  background: var(--primary-bg);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  cursor: move;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.panel-box:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.panel-box.selected-panel {
+  border: 2px solid var(--selected-border) !important;
+  background: var(--selected-bg) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2), var(--shadow-md);
+  z-index: 10;
+}
+
+.panel-header {
+  background: var(--primary-color);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  height: 24px;
+  line-height: 16px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.selected-panel .panel-header {
+  background: var(--selected-color);
+  color: white;
+  font-weight: 600;
+}
+
+.panel-content {
+  padding: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.plot-select {
+  width: 100%;
+  font-size: 12px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.plot-select:focus {
+  border-color: var(--primary-color);
+}
+
+.resize-handle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  cursor: se-resize;
+}
+
+/* Modern bottom-right resize affordance. */
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  border-bottom-right-radius: 2px;
+  opacity: 0.7;
+}
+
+.selected-panel .resize-handle::after {
+  border-color: var(--selected-color);
+  opacity: 1;
+}
+
+.snap-guide {
+  position: absolute;
+  background: #ef4444; /* Modern red */
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 0 2px rgba(239, 68, 68, 0.5);
+}
+
+.snap-guide.v {
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+.snap-guide.h {
+  height: 1px;
+  width: 100%;
+  left: 0;
+}
+
+.inspector-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-top: 15px;
+  box-shadow: var(--shadow-sm);
+}
+
+.inspector-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text-main);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.align-toolbar,
+.layer-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.align-toolbar .btn,
+.layer-toolbar .btn {
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  white-space: normal;
+  line-height: 1.2;
+}
+
+pre {
+  background: #f1f5f9;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--text-main);
+}

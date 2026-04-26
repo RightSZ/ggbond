@@ -1,0 +1,7 @@
+^ggbond\.Rproj$
+^\.Rproj\.user$
+^\.DS_Store$
+^inst/\.DS_Store$
+^\.Rhistory$
+^Rplots\.pdf$
+^test\.pdf$
