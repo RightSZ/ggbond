@@ -36,3 +36,7 @@ effect and returns when the Shiny app stops.
 \description{
 Run the ggbond Shiny app
 }
+\details{
+Canvas and device sizes are linked at 100 pixels per inch. If only
+one size pair is supplied, the other pair is derived automatically.
+}

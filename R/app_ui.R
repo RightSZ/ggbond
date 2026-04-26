@@ -90,9 +90,26 @@ ggbond_ui <- function(canvas_width_px = 700,
         width = 3,
 
         shiny::div(
-          class = "inspector-card",
-          shiny::div(class = "inspector-title", "Panel Inspector"),
-          shiny::uiOutput("panel_inspector")
+          id = "inspector_shell",
+          class = "inspector-shell",
+          shiny::div(
+            class = "inspector-card",
+            shiny::div(
+              class = "inspector-title",
+              shiny::span("Panel Inspector"),
+              shiny::tags$button(
+                id = "toggle_inspector",
+                type = "button",
+                class = "inspector-toggle",
+                title = "Hide panel inspector",
+                "Hide"
+              )
+            ),
+            shiny::div(
+              class = "inspector-body",
+              shiny::uiOutput("panel_inspector")
+            )
+          )
         )
       )
     )

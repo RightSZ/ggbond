@@ -28,7 +28,16 @@ draw_layout_to_device <- function(
   if (is.null(device_id)) return(NULL)
   if (!device_id %in% grDevices::dev.list()) return(NULL)
 
+  previous_device <- as.integer(grDevices::dev.cur())
+  restore_previous_device <- previous_device != as.integer(device_id) &&
+    previous_device %in% grDevices::dev.list()
+
   invisible(grDevices::dev.set(device_id))
+  on.exit({
+    if (restore_previous_device && previous_device %in% grDevices::dev.list()) {
+      invisible(grDevices::dev.set(previous_device))
+    }
+  }, add = TRUE)
 
   grid::grid.newpage()
 

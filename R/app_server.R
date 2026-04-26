@@ -151,7 +151,10 @@ ggbond_server <- function(
     })
 
     observeEvent(input$open_device, {
-      id <- open_fixed_device()
+      id <- open_fixed_device(
+        width = device_width_in,
+        height = device_height_in
+      )
       device_id(id)
 
       redraw_device(parse_layout())
@@ -497,8 +500,7 @@ ggbond_server <- function(
       id <- device_id()
 
       if (!is.null(id) && id %in% grDevices::dev.list()) {
-        invisible(grDevices::dev.set(id))
-        grDevices::dev.off()
+        grDevices::dev.off(id)
       }
 
       shiny::stopApp()

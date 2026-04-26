@@ -268,6 +268,17 @@ let panelCounter = 0;
         ) !== null;
       }
 
+      document.addEventListener('click', function(e) {
+        if (!e.target || e.target.id !== 'toggle_inspector') return;
+
+        let shell = document.getElementById('inspector_shell');
+        if (!shell) return;
+
+        let collapsed = shell.classList.toggle('is-collapsed');
+        e.target.textContent = collapsed ? 'Show' : 'Hide';
+        e.target.title = collapsed ? 'Show panel inspector' : 'Hide panel inspector';
+      });
+
       function moveSelectedPanels(dx, dy) {
         let selected = getSelectedPanels();
         if (selected.length === 0) return;

@@ -158,7 +158,16 @@ body {
   left: 0;
 }
 
+.inspector-shell {
+  position: sticky;
+  top: 15px;
+  z-index: 2147483000;
+  isolation: isolate;
+}
+
 .inspector-card {
+  position: relative;
+  z-index: 1;
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -168,12 +177,47 @@ body {
 }
 
 .inspector-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-weight: 600;
   font-size: 16px;
   margin-bottom: 12px;
   color: var(--text-main);
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
+}
+
+.inspector-toggle {
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.inspector-toggle:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.inspector-shell.is-collapsed .inspector-card {
+  padding-bottom: 12px;
+}
+
+.inspector-shell.is-collapsed .inspector-title {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.inspector-shell.is-collapsed .inspector-body {
+  display: none;
 }
 
 .align-toolbar,

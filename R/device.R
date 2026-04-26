@@ -27,7 +27,8 @@ open_fixed_device <- function(
     grDevices::windows(
       title = title,
       width = width,
-      height = height
+      height = height,
+      restoreConsole = FALSE
     )
   } else {
     grDevices::x11(
@@ -39,4 +40,3 @@ open_fixed_device <- function(
 
   grDevices::dev.cur()
 }
-
