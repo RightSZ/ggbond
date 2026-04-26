@@ -4,6 +4,8 @@ let panelCounter = 0;
       let selectedPanelIds = [];
       let undoStack = [];
       let sourceChoices = [];
+      let keyboardMoveSnapshot = null;
+      let activeArrowKeys = new Set();
 
       const SNAP_THRESHOLD = 8;
       const MAX_UNDO_STEPS = 100;
@@ -282,7 +284,9 @@ let panelCounter = 0;
         }
       });
 
-      function moveSelectedPanels(dx, dy) {
+      function moveSelectedPanels(dx, dy, options = {}) {
+        let pushUndo = options.pushUndo !== false;
+        let sync = options.sync !== false;
         let selected = getSelectedPanels();
         if (selected.length === 0) return;
 
@@ -314,8 +318,29 @@ let panelCounter = 0;
           panel.el.style.top = (panel.top + actualDy) + 'px';
         });
 
-        pushUndoSnapshot(before);
-        updateLayoutState(true);
+        if (pushUndo) {
+          pushUndoSnapshot(before);
+        }
+        if (sync) {
+          updateLayoutState(true);
+        }
+      }
+
+      function commitKeyboardMove() {
+        if (!keyboardMoveSnapshot) return;
+
+        let currentSnapshot = snapshotPanels(
+          keyboardMoveSnapshot.map(function(panel) {
+            return panel.id;
+          })
+        );
+
+        if (snapshotsDiffer(keyboardMoveSnapshot, currentSnapshot)) {
+          pushUndoSnapshot(keyboardMoveSnapshot);
+          updateLayoutState(true);
+        }
+
+        keyboardMoveSnapshot = null;
       }
 
       function alignSelectedPanels(mode) {
@@ -850,6 +875,8 @@ let panelCounter = 0;
           if (isEditingFormField(e.target)) return;
 
           e.preventDefault();
+          activeArrowKeys.clear();
+          commitKeyboardMove();
           undoLastChange();
           return;
         }
@@ -868,7 +895,29 @@ let panelCounter = 0;
         let delta = arrowDeltas[e.key];
 
         e.preventDefault();
-        moveSelectedPanels(delta[0] * step, delta[1] * step);
+        activeArrowKeys.add(e.key);
+        if (!keyboardMoveSnapshot) {
+          keyboardMoveSnapshot = snapshotPanels(selectedPanelIds);
+        }
+        moveSelectedPanels(delta[0] * step, delta[1] * step, {
+          pushUndo: false,
+          sync: false
+        });
+      });
+
+      document.addEventListener('keyup', function(e) {
+        let arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+        if (!arrowKeys.includes(e.key)) return;
+
+        activeArrowKeys.delete(e.key);
+        if (activeArrowKeys.size === 0) {
+          commitKeyboardMove();
+        }
+      });
+
+      window.addEventListener('blur', function() {
+        activeArrowKeys.clear();
+        commitKeyboardMove();
       });
 
       Shiny.addCustomMessageHandler('add_panel', function(message) {
