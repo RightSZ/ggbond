@@ -405,6 +405,53 @@ let panelCounter = 0;
         }
       }
 
+      function resizeSelectedPanels(mode) {
+        let selected = getSelectedPanels();
+        if (selected.length < 2) return;
+
+        let reference = selected.find(function(panel) {
+          return panel.id === selectedPanelId;
+        });
+        if (!reference) {
+          reference = selected[selected.length - 1];
+        }
+
+        let canvas = document.getElementById('canvas');
+        if (!canvas) return;
+
+        let before = snapshotPanels(selectedPanelIds);
+        let targetWidth = Math.min(reference.width, canvas.clientWidth);
+        let targetHeight = Math.min(reference.height, canvas.clientHeight);
+
+        selected.forEach(function(panel) {
+          let nextWidth = panel.width;
+          let nextHeight = panel.height;
+
+          if (mode === 'width' || mode === 'size') {
+            nextWidth = targetWidth;
+          }
+          if (mode === 'height' || mode === 'size') {
+            nextHeight = targetHeight;
+          }
+
+          nextWidth = Math.max(100, Math.min(nextWidth, canvas.clientWidth));
+          nextHeight = Math.max(80, Math.min(nextHeight, canvas.clientHeight));
+
+          let nextLeft = Math.max(0, Math.min(panel.left, canvas.clientWidth - nextWidth));
+          let nextTop = Math.max(0, Math.min(panel.top, canvas.clientHeight - nextHeight));
+
+          panel.el.style.left = nextLeft + 'px';
+          panel.el.style.top = nextTop + 'px';
+          panel.el.style.width = nextWidth + 'px';
+          panel.el.style.height = nextHeight + 'px';
+        });
+
+        if (snapshotsDiffer(before, snapshotPanels(selectedPanelIds))) {
+          pushUndoSnapshot(before);
+          updateLayoutState(true);
+        }
+      }
+
       function setSelectedLayer(direction) {
         let selected = getSelectedPanels();
         if (selected.length === 0) return;
@@ -994,6 +1041,10 @@ let panelCounter = 0;
 
       Shiny.addCustomMessageHandler('align_selected_panels', function(message) {
         alignSelectedPanels(message.mode);
+      });
+
+      Shiny.addCustomMessageHandler('resize_selected_panels', function(message) {
+        resizeSelectedPanels(message.mode);
       });
 
       Shiny.addCustomMessageHandler('set_selected_layer', function(message) {

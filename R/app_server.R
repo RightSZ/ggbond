@@ -264,6 +264,13 @@ ggbond_server <- function(
             ),
             tags$hr(),
             tags$div(
+              class = "size-toolbar",
+              actionButton("match_width", "Equal width"),
+              actionButton("match_height", "Equal height"),
+              actionButton("match_size", "Equal size")
+            ),
+            tags$hr(),
+            tags$div(
               class = "layer-toolbar",
               actionButton("layer_top", "Bring to front"),
               actionButton("layer_bottom", "Send to back")
@@ -408,6 +415,18 @@ ggbond_server <- function(
 
     observeEvent(input$align_bottom, {
       session$sendCustomMessage("align_selected_panels", list(mode = "bottom"))
+    })
+
+    observeEvent(input$match_width, {
+      session$sendCustomMessage("resize_selected_panels", list(mode = "width"))
+    })
+
+    observeEvent(input$match_height, {
+      session$sendCustomMessage("resize_selected_panels", list(mode = "height"))
+    })
+
+    observeEvent(input$match_size, {
+      session$sendCustomMessage("resize_selected_panels", list(mode = "size"))
     })
 
     observeEvent(input$layer_top, {

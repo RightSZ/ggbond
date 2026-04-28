@@ -221,6 +221,7 @@ body {
 }
 
 .align-toolbar,
+.size-toolbar,
 .layer-toolbar {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -228,6 +229,7 @@ body {
 }
 
 .align-toolbar .btn,
+.size-toolbar .btn,
 .layer-toolbar .btn {
   width: 100%;
   min-height: 34px;
@@ -235,6 +237,10 @@ body {
   border-radius: var(--radius-sm);
   white-space: normal;
   line-height: 1.2;
+}
+
+.size-toolbar {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 pre {
