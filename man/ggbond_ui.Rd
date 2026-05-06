@@ -8,7 +8,8 @@ ggbond_ui(
   canvas_width_px = 700,
   canvas_height_px = 500,
   device_width_in = 7,
-  device_height_in = 5
+  device_height_in = 5,
+  asset_prefix = "ggbond-assets"
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ ggbond_ui(
 \item{device_width_in}{Graphics device width in inches.}
 
 \item{device_height_in}{Graphics device height in inches.}
+
+\item{asset_prefix}{Shiny resource path prefix for static app assets.}
 }
 \value{
 A Shiny UI object.

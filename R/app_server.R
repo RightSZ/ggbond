@@ -56,27 +56,31 @@ ggbond_server <- function(
       plots <- names(plot_list)
       images <- isolate(image_assets())
 
+      choices <- c(
+        lapply(plots, function(plot_name) {
+          list(
+            value = paste0("plot:", plot_name),
+            label = paste0("Plot: ", plot_name),
+            type = "plot",
+            aspect = NULL
+          )
+        }),
+        lapply(seq_len(nrow(images)), function(i) {
+          list(
+            value = paste0("image:", images$id[[i]]),
+            label = paste0("Image: ", images$label[[i]]),
+            type = "image",
+            aspect = images$aspect[[i]]
+          )
+        })
+      )
+
       session$sendCustomMessage(
         "update_source_choices",
-        c(
-          lapply(plots, function(plot_name) {
-            list(
-              value = paste0("plot:", plot_name),
-              label = paste0("Plot: ", plot_name),
-              type = "plot",
-              aspect = NULL
-            )
-          }),
-          lapply(seq_len(nrow(images)), function(i) {
-            list(
-              value = paste0("image:", images$id[[i]]),
-              label = paste0("Image: ", images$label[[i]]),
-              type = "image",
-              aspect = images$aspect[[i]]
-            )
-          })
-        )
+        choices
       )
+
+      invisible(choices)
     }
 
     parse_layout <- function() {
@@ -122,6 +126,17 @@ ggbond_server <- function(
       invisible(NULL)
     }
 
+    close_preview_device <- function() {
+      id <- isolate(device_id())
+
+      if (!is.null(id) && id %in% grDevices::dev.list()) {
+        grDevices::dev.off(id)
+      }
+
+      device_id(NULL)
+      invisible(NULL)
+    }
+
     get_selected_panel <- reactive({
       layout <- parse_layout()
       sid <- selected_panel_id()
@@ -164,6 +179,10 @@ ggbond_server <- function(
       send_source_choices()
     }, once = TRUE)
 
+    observeEvent(input$ggbond_client_ready, {
+      send_source_choices()
+    }, ignoreInit = TRUE)
+
     observeEvent(input$add_panel, {
       # Default to the first plot source when one is available.
       default_source <- if (length(plot_list) > 0) {
@@ -171,7 +190,25 @@ ggbond_server <- function(
       } else {
         ""
       }
-      session$sendCustomMessage("add_panel", list(source = default_source))
+      session$sendCustomMessage(
+        "add_panel",
+        list(
+          source = default_source,
+          choices = send_source_choices()
+        )
+      )
+    })
+
+    observeEvent(input$delete_panel, {
+      session$sendCustomMessage(
+        "delete_selected_panels",
+        list(nonce = input$delete_panel)
+      )
+    })
+
+    observeEvent(input$exit_app, {
+      close_preview_device()
+      shiny::stopApp()
     })
 
     observeEvent(input$image_files, {
@@ -517,12 +554,7 @@ ggbond_server <- function(
     )
 
     session$onSessionEnded(function() {
-      id <- device_id()
-
-      if (!is.null(id) && id %in% grDevices::dev.list()) {
-        grDevices::dev.off(id)
-      }
-
+      close_preview_device()
       shiny::stopApp()
     })
   }

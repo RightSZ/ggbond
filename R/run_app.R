@@ -74,9 +74,18 @@ run_ggbond <- function(
     )
   }
 
-  # Register static assets for the Shiny session.
+  # Register static assets for the Shiny session. The prefix is unique so
+  # browsers and long-lived R sessions cannot reuse an older ggbond.js mapping.
+  asset_prefix <- paste0(
+    "ggbond-assets-",
+    format(Sys.time(), "%Y%m%d%H%M%OS3"),
+    "-",
+    sample.int(1e6, 1)
+  )
+  asset_prefix <- gsub("[^A-Za-z0-9_-]", "", asset_prefix)
+
   shiny::addResourcePath(
-    prefix = "ggbond-assets",
+    prefix = asset_prefix,
     directoryPath = www_dir
   )
 
@@ -84,7 +93,8 @@ run_ggbond <- function(
     canvas_width_px = canvas_width_px,
     canvas_height_px = canvas_height_px,
     device_width_in = device_width_in,
-    device_height_in = device_height_in
+    device_height_in = device_height_in,
+    asset_prefix = asset_prefix
   )
 
   server <- ggbond_server(

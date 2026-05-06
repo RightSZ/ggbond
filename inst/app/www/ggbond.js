@@ -9,6 +9,51 @@ let panelCounter = 0;
 
       const SNAP_THRESHOLD = 8;
       const MAX_UNDO_STEPS = 100;
+      const DEFAULT_PANEL_WIDTH = 260;
+      const DEFAULT_PANEL_HEIGHT = 170;
+      const PANEL_SPAWN_MARGIN = 30;
+      const PANEL_SPAWN_STEP = 24;
+
+      function formatPanelLabel(index) {
+        let label = '';
+        let n = index;
+
+        while (n > 0) {
+          n -= 1;
+          label = String.fromCharCode(65 + (n % 26)) + label;
+          n = Math.floor(n / 26);
+        }
+
+        return label;
+      }
+
+      function getNextPanelPosition(canvas, width, height) {
+        let maxLeft = Math.max(0, canvas.clientWidth - width);
+        let maxTop = Math.max(0, canvas.clientHeight - height);
+        let usableWidth = Math.max(1, maxLeft - PANEL_SPAWN_MARGIN);
+        let columns = Math.max(
+          1,
+          Math.floor(usableWidth / PANEL_SPAWN_STEP) + 1
+        );
+        let offsetIndex = Math.max(0, Object.keys(panels).length);
+        let column = offsetIndex % columns;
+        let row = Math.floor(offsetIndex / columns);
+        let rowHeight = Math.max(PANEL_SPAWN_STEP, Math.min(height + PANEL_SPAWN_STEP, 220));
+        let left = PANEL_SPAWN_MARGIN + column * PANEL_SPAWN_STEP;
+        let top = PANEL_SPAWN_MARGIN + row * rowHeight;
+
+        if (top > maxTop) {
+          let rowCount = Math.max(1, Math.floor((maxTop - PANEL_SPAWN_MARGIN) / rowHeight) + 1);
+          row = row % rowCount;
+          top = PANEL_SPAWN_MARGIN + row * rowHeight;
+          left = PANEL_SPAWN_MARGIN + ((column + row) % columns) * PANEL_SPAWN_STEP;
+        }
+
+        return {
+          left: Math.max(0, Math.min(left, maxLeft)),
+          top: Math.max(0, Math.min(top, maxTop))
+        };
+      }
 
       function syncSelectionInputs() {
         Shiny.setInputValue('selected_panel_id', selectedPanelId, {priority: 'event'});
@@ -282,6 +327,15 @@ let panelCounter = 0;
         if (!collapsed) {
           syncSelectionInputs();
         }
+      });
+
+      document.addEventListener('click', function(e) {
+        let deleteButton = e.target ? e.target.closest('#delete_panel') : null;
+        if (!deleteButton) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        deleteSelectedPanels();
       });
 
       function moveSelectedPanels(dx, dy, options = {}) {
@@ -711,7 +765,10 @@ let panelCounter = 0;
 
         let canvas = document.getElementById('canvas');
         let id = 'panel_' + panelCounter;
-        let label = String.fromCharCode(64 + panelCounter);
+        let label = formatPanelLabel(panelCounter);
+        let width = Math.min(DEFAULT_PANEL_WIDTH, canvas.clientWidth);
+        let height = Math.min(DEFAULT_PANEL_HEIGHT, canvas.clientHeight);
+        let position = getNextPanelPosition(canvas, width, height);
 
         if (sourceId === null || sourceId === '') {
           sourceId = sourceChoices.length > 0 ? sourceChoices[0].value : '';
@@ -721,10 +778,10 @@ let panelCounter = 0;
         panel.className = 'panel-box';
         panel.id = id;
         panel.dataset.label = label;
-        panel.style.left = (30 + panelCounter * 20) + 'px';
-        panel.style.top = (30 + panelCounter * 20) + 'px';
-        panel.style.width = '260px';
-        panel.style.height = '170px';
+        panel.style.left = position.left + 'px';
+        panel.style.top = position.top + 'px';
+        panel.style.width = width + 'px';
+        panel.style.height = height + 'px';
         panel.style.zIndex = Object.keys(panels).length + 1;
         panel.dataset.lockAspect = 'false';
         panel.dataset.showBorder = 'false';
@@ -756,6 +813,32 @@ let panelCounter = 0;
         });
 
         selectPanel(id);
+        updateLayoutState(true);
+      }
+
+      function deleteSelectedPanels() {
+        let idsToDelete = selectedPanelIds.length > 0 ?
+          selectedPanelIds.slice() :
+          (selectedPanelId ? [selectedPanelId] : []);
+
+        if (idsToDelete.length === 0) return;
+
+        activeArrowKeys.clear();
+        commitKeyboardMove();
+
+        idsToDelete.forEach(function(id) {
+          let el = document.getElementById(id);
+          if (el) {
+            el.remove();
+          }
+          delete panels[id];
+        });
+
+        selectedPanelIds = [];
+        selectedPanelId = null;
+
+        renderSelection();
+        syncSelectionInputs();
         updateLayoutState(true);
       }
 
@@ -968,7 +1051,15 @@ let panelCounter = 0;
       });
 
       Shiny.addCustomMessageHandler('add_panel', function(message) {
+        if (message.choices) {
+          sourceChoices = message.choices || [];
+          refreshAllSourceSelects();
+        }
         addPanel(message.source || message.plot);
+      });
+
+      Shiny.addCustomMessageHandler('delete_selected_panels', function() {
+        deleteSelectedPanels();
       });
 
       Shiny.addCustomMessageHandler('update_source_choices', function(message) {
@@ -1050,3 +1141,17 @@ let panelCounter = 0;
       Shiny.addCustomMessageHandler('set_selected_layer', function(message) {
         setSelectedLayer(message.direction);
       });
+
+      function notifyGgbondReady() {
+        if (window.Shiny && Shiny.setInputValue) {
+          Shiny.setInputValue('ggbond_client_ready', Date.now(), {priority: 'event'});
+        } else {
+          window.setTimeout(notifyGgbondReady, 50);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', notifyGgbondReady);
+      } else {
+        notifyGgbondReady();
+      }

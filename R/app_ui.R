@@ -7,21 +7,25 @@
 #' @param canvas_height_px Canvas height in pixels.
 #' @param device_width_in Graphics device width in inches.
 #' @param device_height_in Graphics device height in inches.
+#' @param asset_prefix Shiny resource path prefix for static app assets.
 #'
 #' @return A Shiny UI object.
 #' @export
 ggbond_ui <- function(canvas_width_px = 700,
                       canvas_height_px = 500,
                       device_width_in = 7,
-                      device_height_in = 5) {
+                      device_height_in = 5,
+                      asset_prefix = "ggbond-assets") {
+  asset_version <- as.integer(Sys.time())
+
   shiny::fluidPage(
     shiny::tags$head(
       shiny::tags$link(
         rel = "stylesheet",
         type = "text/css",
-        href = "ggbond-assets/ggbond.css"
+        href = paste0(asset_prefix, "/ggbond.css?v=", asset_version)
       ),
-      shiny::tags$script(src = "ggbond-assets/ggbond.js")
+      shiny::tags$script(src = paste0(asset_prefix, "/ggbond.js?v=", asset_version))
     ),
 
     shiny::titlePanel("ggbond: Fixed-size ggplot Layout Editor"),
@@ -35,7 +39,11 @@ ggbond_ui <- function(canvas_width_px = 700,
         shiny::actionButton("open_device", "Open fixed R plot window"),
         shiny::br(), shiny::br(),
 
-        shiny::actionButton("add_panel", "Add panel", icon = shiny::icon("plus"), class = "btn-primary"),
+        shiny::div(
+          class = "panel-action-row",
+          shiny::actionButton("add_panel", "Add panel", icon = shiny::icon("plus"), class = "btn-primary"),
+          shiny::actionButton("delete_panel", "Delete selected", icon = shiny::icon("trash"), class = "btn-danger")
+        ),
         shiny::br(), shiny::br(),
 
         shiny::fileInput(
@@ -57,7 +65,15 @@ ggbond_ui <- function(canvas_width_px = 700,
 
         shiny::downloadButton("download_pdf", "Export PDF"),
         shiny::br(), shiny::br(),
-        shiny::downloadButton("download_png", "Export PNG")
+        shiny::downloadButton("download_png", "Export PNG"),
+        shiny::br(), shiny::br(),
+
+        shiny::actionButton(
+          "exit_app",
+          "Exit Shiny",
+          icon = shiny::icon("power-off"),
+          class = "btn-danger exit-app-button"
+        )
       ),
 
       shiny::column(
