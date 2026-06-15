@@ -4,6 +4,12 @@
 #' ggbond demo Shiny app, including ggplot2 and optional non-ggplot examples.
 #'
 #' @return A named list of plot objects.
+#'
+#' @examples
+#' plots <- ggbond_demo_plots()
+#' names(plots)
+#' length(plots)
+#'
 #' @export
 ggbond_demo_plots <- function() {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {

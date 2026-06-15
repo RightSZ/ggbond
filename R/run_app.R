@@ -15,6 +15,16 @@
 #' @return A `ggbond` layout object containing panel positions, canvas metadata,
 #'   graphics device metadata, uploaded image metadata, and the app exit reason.
 #'
+#' @examples
+#' if (interactive()) {
+#'   plots <- list(
+#'     scatter = ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'       ggplot2::geom_point()
+#'   )
+#'   layout <- run_ggbond(plots)
+#'   layout
+#' }
+#'
 #' @export
 run_ggbond <- function(
     plot_list = NULL,

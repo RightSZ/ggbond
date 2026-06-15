@@ -13,3 +13,9 @@ A named list of plot objects.
 This function creates a small set of example plot objects used by the
 ggbond demo Shiny app, including ggplot2 and optional non-ggplot examples.
 }
+\examples{
+plots <- ggbond_demo_plots()
+names(plots)
+length(plots)
+
+}

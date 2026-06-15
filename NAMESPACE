@@ -2,8 +2,6 @@
 
 S3method(print,ggbond)
 export(ggbond_demo_plots)
-export(ggbond_server)
-export(ggbond_ui)
 export(read_ggbond_json)
 export(render_ggbond)
 export(run_ggbond)

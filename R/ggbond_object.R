@@ -85,6 +85,21 @@ normalize_ggbond_table <- function(x) {
 #' @param ... Unused.
 #'
 #' @return Invisibly returns `x`.
+#'
+#' @examples
+#' layout <- structure(
+#'   list(
+#'     layout = data.frame(id = "panel_1", label = "A"),
+#'     canvas = list(width_px = 700, height_px = 500),
+#'     device = list(width_in = 7, height_in = 5),
+#'     image_assets = data.frame(),
+#'     exit_reason = "example",
+#'     created_at = Sys.time()
+#'   ),
+#'   class = "ggbond"
+#' )
+#' print(layout)
+#'
 #' @export
 print.ggbond <- function(x, ...) {
   panel_count <- if (is.data.frame(x$layout)) {
@@ -123,6 +138,36 @@ print.ggbond <- function(x, ...) {
 #' @param pretty Whether to write pretty-formatted JSON.
 #'
 #' @return Invisibly returns `file`.
+#'
+#' @examples
+#' layout <- structure(
+#'   list(
+#'     layout = data.frame(
+#'       id = "panel_1",
+#'       label = "A",
+#'       x = 0,
+#'       y = 0,
+#'       width = 700,
+#'       height = 500,
+#'       plot = "scatter",
+#'       source = "plot:scatter",
+#'       lock_aspect = FALSE,
+#'       show_border = FALSE,
+#'       z = 1
+#'     ),
+#'     canvas = list(width_px = 700, height_px = 500),
+#'     device = list(width_in = 7, height_in = 5),
+#'     image_assets = data.frame(),
+#'     exit_reason = "example",
+#'     created_at = Sys.time()
+#'   ),
+#'   class = "ggbond"
+#' )
+#' file <- tempfile(fileext = ".json")
+#' save_ggbond_json(layout, file)
+#' restored <- read_ggbond_json(file)
+#' restored
+#'
 #' @export
 save_ggbond_json <- function(x, file, pretty = TRUE) {
   if (!inherits(x, "ggbond")) {
@@ -152,6 +197,35 @@ save_ggbond_json <- function(x, file, pretty = TRUE) {
 #' @param file Input JSON file path produced by [save_ggbond_json()].
 #'
 #' @return A `ggbond` object.
+#'
+#' @examples
+#' layout <- structure(
+#'   list(
+#'     layout = data.frame(
+#'       id = "panel_1",
+#'       label = "A",
+#'       x = 0,
+#'       y = 0,
+#'       width = 700,
+#'       height = 500,
+#'       plot = "scatter",
+#'       source = "plot:scatter",
+#'       lock_aspect = FALSE,
+#'       show_border = FALSE,
+#'       z = 1
+#'     ),
+#'     canvas = list(width_px = 700, height_px = 500),
+#'     device = list(width_in = 7, height_in = 5),
+#'     image_assets = data.frame(),
+#'     exit_reason = "example",
+#'     created_at = Sys.time()
+#'   ),
+#'   class = "ggbond"
+#' )
+#' file <- tempfile(fileext = ".json")
+#' save_ggbond_json(layout, file)
+#' read_ggbond_json(file)
+#'
 #' @export
 read_ggbond_json <- function(file) {
   payload <- jsonlite::read_json(
@@ -199,6 +273,39 @@ read_ggbond_json <- function(file) {
 #' @param res PNG resolution in dots per inch.
 #'
 #' @return Invisibly returns `x`.
+#'
+#' @examples
+#' plots <- list(
+#'   scatter = ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'     ggplot2::geom_point()
+#' )
+#' layout <- structure(
+#'   list(
+#'     layout = data.frame(
+#'       id = "panel_1",
+#'       label = "A",
+#'       x = 0,
+#'       y = 0,
+#'       width = 700,
+#'       height = 500,
+#'       plot = "scatter",
+#'       source = "plot:scatter",
+#'       lock_aspect = FALSE,
+#'       show_border = FALSE,
+#'       z = 1
+#'     ),
+#'     canvas = list(width_px = 700, height_px = 500),
+#'     device = list(width_in = 7, height_in = 5),
+#'     image_assets = data.frame(),
+#'     exit_reason = "example",
+#'     created_at = Sys.time()
+#'   ),
+#'   class = "ggbond"
+#' )
+#' file <- tempfile(fileext = ".png")
+#' render_ggbond(layout, plots, file = file, res = 72)
+#' file.exists(file)
+#'
 #' @export
 render_ggbond <- function(
     x,

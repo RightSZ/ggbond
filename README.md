@@ -1,6 +1,6 @@
 # ggbond <img src="man/figures/logo.png" align="right" height="139" />
 
-![](https://img.shields.io/badge/Release-0.0.3-orange.svg) ![](https://img.shields.io/badge/Development-0.0.3.9000-red.svg)
+![](https://img.shields.io/badge/Release-0.0.3-orange.svg) ![](https://img.shields.io/badge/Development-0.0.4-red.svg)
 
 ggbond is a Shiny-based layout editor for arranging R plots on a
 fixed-size canvas. It lets you build multi-panel figures interactively,

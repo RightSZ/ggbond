@@ -14,7 +14,8 @@
 #' @importFrom shiny actionButton checkboxInput downloadHandler isolate
 #'   numericInput observeEvent p reactive reactiveVal renderText renderUI
 #'   selectInput showNotification tagList tags textInput
-#' @export
+#' @keywords internal
+#' @noRd
 ggbond_server <- function(
     plot_list,
     canvas_width_px = 700,

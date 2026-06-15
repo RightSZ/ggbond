@@ -38,3 +38,36 @@ Invisibly returns \code{x}.
 \description{
 Re-renders a layout returned by \code{\link[=run_ggbond]{run_ggbond()}} using a supplied plot list.
 }
+\examples{
+plots <- list(
+  scatter = ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point()
+)
+layout <- structure(
+  list(
+    layout = data.frame(
+      id = "panel_1",
+      label = "A",
+      x = 0,
+      y = 0,
+      width = 700,
+      height = 500,
+      plot = "scatter",
+      source = "plot:scatter",
+      lock_aspect = FALSE,
+      show_border = FALSE,
+      z = 1
+    ),
+    canvas = list(width_px = 700, height_px = 500),
+    device = list(width_in = 7, height_in = 5),
+    image_assets = data.frame(),
+    exit_reason = "example",
+    created_at = Sys.time()
+  ),
+  class = "ggbond"
+)
+file <- tempfile(fileext = ".png")
+render_ggbond(layout, plots, file = file, res = 72)
+file.exists(file)
+
+}

@@ -17,3 +17,18 @@ Invisibly returns \code{x}.
 \description{
 Print a ggbond layout object
 }
+\examples{
+layout <- structure(
+  list(
+    layout = data.frame(id = "panel_1", label = "A"),
+    canvas = list(width_px = 700, height_px = 500),
+    device = list(width_in = 7, height_in = 5),
+    image_assets = data.frame(),
+    exit_reason = "example",
+    created_at = Sys.time()
+  ),
+  class = "ggbond"
+)
+print(layout)
+
+}

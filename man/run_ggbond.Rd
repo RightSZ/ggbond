@@ -40,3 +40,14 @@ Run the ggbond Shiny app
 Canvas and device sizes are linked at 100 pixels per inch. If only
 one size pair is supplied, the other pair is derived automatically.
 }
+\examples{
+if (interactive()) {
+  plots <- list(
+    scatter = ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+      ggplot2::geom_point()
+  )
+  layout <- run_ggbond(plots)
+  layout
+}
+
+}

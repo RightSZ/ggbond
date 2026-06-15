@@ -10,7 +10,8 @@
 #' @param asset_prefix Shiny resource path prefix for static app assets.
 #'
 #' @return A Shiny UI object.
-#' @export
+#' @keywords internal
+#' @noRd
 ggbond_ui <- function(canvas_width_px = 700,
                       canvas_height_px = 500,
                       device_width_in = 7,
