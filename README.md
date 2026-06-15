@@ -1,6 +1,6 @@
 # ggbond <img src="man/figures/logo.png" align="right" height="139" />
 
-![](https://img.shields.io/badge/Release-0.0.2-orange.svg) ![](https://img.shields.io/badge/Test-0.0.2.9000-red.svg)
+![](https://img.shields.io/badge/Release-0.0.2-orange.svg) ![](https://img.shields.io/badge/Test-0.0.3.9000-red.svg)
 
 ggbond is a Shiny-based layout editor for arranging R plots on a
 fixed-size canvas. It is designed for building multi-panel figures
@@ -59,7 +59,28 @@ plots <- list(
   }
 )
 
-run_ggbond(plots)
+layout <- run_ggbond(plots)
+layout
+```
+
+When you close the app with **Exit Shiny** or by closing the browser
+session, `run_ggbond()` returns a `ggbond` object. The object stores the
+panel layout, canvas size, graphics device size, uploaded image metadata,
+and exit reason.
+
+You can render the saved layout again from code with the same plot list:
+
+``` r
+render_ggbond(layout, plots, file = "figure.pdf")
+render_ggbond(layout, plots, file = "figure.png")
+```
+
+Layouts can also be saved and restored as JSON:
+
+``` r
+save_ggbond_json(layout, "layout.json")
+layout2 <- read_ggbond_json("layout.json")
+render_ggbond(layout2, plots, file = "figure.pdf")
 ```
 
 For pheatmap:

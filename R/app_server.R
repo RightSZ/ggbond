@@ -137,6 +137,34 @@ ggbond_server <- function(
       invisible(NULL)
     }
 
+    build_return_value <- function(exit_reason = "unknown") {
+      txt <- isolate(layout_state())
+      layout <- if (is.null(txt) || txt == "" || txt == "[]") {
+        data.frame()
+      } else {
+        out <- jsonlite::fromJSON(txt)
+        if (is.null(out) || length(out) == 0) {
+          data.frame()
+        } else {
+          out
+        }
+      }
+
+      new_ggbond(
+        layout = layout,
+        canvas = list(
+          width_px = canvas_width_px,
+          height_px = canvas_height_px
+        ),
+        device = list(
+          width_in = device_width_in,
+          height_in = device_height_in
+        ),
+        image_assets = isolate(image_assets()),
+        exit_reason = exit_reason
+      )
+    }
+
     get_selected_panel <- reactive({
       layout <- parse_layout()
       sid <- selected_panel_id()
@@ -207,8 +235,9 @@ ggbond_server <- function(
     })
 
     observeEvent(input$exit_app, {
+      return_value <- build_return_value("button")
       close_preview_device()
-      shiny::stopApp()
+      shiny::stopApp(returnValue = return_value)
     })
 
     observeEvent(input$image_files, {
@@ -554,8 +583,9 @@ ggbond_server <- function(
     )
 
     session$onSessionEnded(function() {
+      return_value <- build_return_value("session_ended")
       close_preview_device()
-      shiny::stopApp()
+      shiny::stopApp(returnValue = return_value)
     })
   }
 }

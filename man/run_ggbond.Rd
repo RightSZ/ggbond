@@ -30,8 +30,8 @@ and local image panels uploaded in the app.}
 \item{launch.browser}{Passed to shiny::runApp().}
 }
 \value{
-Runs a Shiny application. This function is called for its side
-effect and returns when the Shiny app stops.
+A \code{ggbond} layout object containing panel positions, canvas metadata,
+graphics device metadata, uploaded image metadata, and the app exit reason.
 }
 \description{
 Run the ggbond Shiny app

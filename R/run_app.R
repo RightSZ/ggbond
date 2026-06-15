@@ -12,8 +12,8 @@
 #'   one size pair is supplied, the other pair is derived automatically.
 #' @param launch.browser Passed to shiny::runApp().
 #'
-#' @return Runs a Shiny application. This function is called for its side
-#'   effect and returns when the Shiny app stops.
+#' @return A `ggbond` layout object containing panel positions, canvas metadata,
+#'   graphics device metadata, uploaded image metadata, and the app exit reason.
 #'
 #' @export
 run_ggbond <- function(
