@@ -338,6 +338,45 @@ let panelCounter = 0;
         deleteSelectedPanels();
       });
 
+      document.addEventListener('click', function(e) {
+        if (!e.target) return;
+
+        let toolActions = {
+          align_left: function() { alignSelectedPanels('left'); },
+          align_right: function() { alignSelectedPanels('right'); },
+          align_center_h: function() { alignSelectedPanels('center_h'); },
+          align_top: function() { alignSelectedPanels('top'); },
+          align_center_v: function() { alignSelectedPanels('center_v'); },
+          align_bottom: function() { alignSelectedPanels('bottom'); },
+          match_width: function() { resizeSelectedPanels('width'); },
+          match_height: function() { resizeSelectedPanels('height'); },
+          match_size: function() { resizeSelectedPanels('size'); },
+          layer_top: function() { setSelectedLayer('top'); },
+          layer_bottom: function() { setSelectedLayer('bottom'); }
+        };
+
+        let selector = Object.keys(toolActions).map(function(id) {
+          return '#' + id;
+        }).join(',');
+        let button = e.target.closest(selector);
+        if (!button || !Object.prototype.hasOwnProperty.call(toolActions, button.id)) {
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        toolActions[button.id]();
+      });
+
+      document.addEventListener('click', function(e) {
+        let applyButton = e.target ? e.target.closest('#apply_panel_changes') : null;
+        if (!applyButton) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        applyPanelInspectorChanges();
+      });
+
       function moveSelectedPanels(dx, dy, options = {}) {
         let pushUndo = options.pushUndo !== false;
         let sync = options.sync !== false;
@@ -504,6 +543,111 @@ let panelCounter = 0;
           pushUndoSnapshot(before);
           updateLayoutState(true);
         }
+      }
+
+      function readInspectorValue(id, fallback = null) {
+        let el = document.getElementById(id);
+        if (!el) return fallback;
+
+        if (el.type === 'checkbox') {
+          return el.checked;
+        }
+
+        return el.value;
+      }
+
+      function updatePanelFromInspector(message, options = {}) {
+        let el = document.getElementById(message.id);
+        if (!el) return;
+
+        let canvas = document.getElementById('canvas');
+        if (!canvas) return;
+
+        let before = options.pushUndo === false ? null : snapshotPanels([message.id]);
+        let x = parseFloat(message.x);
+        let y = parseFloat(message.y);
+        let width = parseFloat(message.width);
+        let height = parseFloat(message.height);
+
+        if (!Number.isFinite(x)) x = parseFloat(el.style.left);
+        if (!Number.isFinite(y)) y = parseFloat(el.style.top);
+        if (!Number.isFinite(width)) width = parseFloat(el.style.width);
+        if (!Number.isFinite(height)) height = parseFloat(el.style.height);
+
+        width = Math.max(100, Math.min(width, canvas.clientWidth));
+        height = Math.max(80, Math.min(height, canvas.clientHeight));
+
+        x = Math.max(0, Math.min(x, canvas.clientWidth - width));
+        y = Math.max(0, Math.min(y, canvas.clientHeight - height));
+
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.width = width + 'px';
+        el.style.height = height + 'px';
+
+        el.dataset.label = message.label;
+
+        let header = el.querySelector('.panel-header');
+        if (header) {
+          header.innerText = 'Panel ' + message.label;
+        }
+
+        let select = el.querySelector('.plot-select');
+        if (select) {
+          rebuildSourceSelect(select, message.source || message.plot);
+          setPanelSourceMetadata(el, select.value);
+        }
+
+        el.dataset.lockAspect = message.lock_aspect &&
+          el.dataset.sourceType === 'image' ? 'true' : 'false';
+        el.dataset.showBorder = message.show_border ? 'true' : 'false';
+
+        if (isAspectLocked(el)) {
+          let fitted = fitSizeToAspect(
+            width,
+            height,
+            getAspectRatio(el),
+            canvas.clientWidth - x,
+            canvas.clientHeight - y,
+            true
+          );
+          width = fitted.width;
+          height = fitted.height;
+
+          el.style.width = width + 'px';
+          el.style.height = height + 'px';
+        }
+
+        selectPanel(message.id);
+
+        if (before && snapshotsDiffer(before, snapshotPanels([message.id]))) {
+          pushUndoSnapshot(before);
+        }
+        updateLayoutState(true);
+      }
+
+      function applyPanelInspectorChanges() {
+        if (!selectedPanelId) return;
+
+        let current = getSelectedPanels().find(function(panel) {
+          return panel.id === selectedPanelId;
+        });
+        if (!current) return;
+
+        updatePanelFromInspector({
+          id: selectedPanelId,
+          label: readInspectorValue('inspector_label', current.el.dataset.label),
+          source: readInspectorValue(
+            'inspector_source',
+            current.el.querySelector('.plot-select').value
+          ),
+          lock_aspect: readInspectorValue('inspector_lock_aspect', false),
+          show_border: readInspectorValue('inspector_show_border', false),
+          x: readInspectorValue('inspector_x', current.left),
+          y: readInspectorValue('inspector_y', current.top),
+          width: readInspectorValue('inspector_width', current.width),
+          height: readInspectorValue('inspector_height', current.height)
+        });
       }
 
       function setSelectedLayer(direction) {
@@ -1072,62 +1216,7 @@ let panelCounter = 0;
       });
 
       Shiny.addCustomMessageHandler('update_panel_from_inspector', function(message) {
-        let el = document.getElementById(message.id);
-        if (!el) return;
-
-        let canvas = document.getElementById('canvas');
-
-        let x = parseFloat(message.x);
-        let y = parseFloat(message.y);
-        let width = parseFloat(message.width);
-        let height = parseFloat(message.height);
-
-        width = Math.max(100, Math.min(width, canvas.clientWidth));
-        height = Math.max(80, Math.min(height, canvas.clientHeight));
-
-        x = Math.max(0, Math.min(x, canvas.clientWidth - width));
-        y = Math.max(0, Math.min(y, canvas.clientHeight - height));
-
-        el.style.left = x + 'px';
-        el.style.top = y + 'px';
-        el.style.width = width + 'px';
-        el.style.height = height + 'px';
-
-        el.dataset.label = message.label;
-
-        let header = el.querySelector('.panel-header');
-        if (header) {
-          header.innerText = 'Panel ' + message.label;
-        }
-
-        let select = el.querySelector('.plot-select');
-        if (select) {
-          rebuildSourceSelect(select, message.source || message.plot);
-          setPanelSourceMetadata(el, select.value);
-        }
-
-        el.dataset.lockAspect = message.lock_aspect &&
-          el.dataset.sourceType === 'image' ? 'true' : 'false';
-        el.dataset.showBorder = message.show_border ? 'true' : 'false';
-
-        if (isAspectLocked(el)) {
-          let fitted = fitSizeToAspect(
-            width,
-            height,
-            getAspectRatio(el),
-            canvas.clientWidth - x,
-            canvas.clientHeight - y,
-            true
-          );
-          width = fitted.width;
-          height = fitted.height;
-
-          el.style.width = width + 'px';
-          el.style.height = height + 'px';
-        }
-
-        selectPanel(message.id);
-        updateLayoutState(true);
+        updatePanelFromInspector(message);
       });
 
       Shiny.addCustomMessageHandler('align_selected_panels', function(message) {
