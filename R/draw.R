@@ -337,31 +337,33 @@ rasterize_panel_plot <- function(plot_object, width_px, height_px) {
   }
 
   file <- tempfile(fileext = ".png")
-  grDevices::png(
-    filename = file,
-    width = width_px,
-    height = height_px,
-    units = "px",
-    res = 192,
-    bg = "white"
-  )
-  on.exit({
-    grDevices::dev.off()
-    unlink(file)
-  }, add = TRUE)
+  on.exit(unlink(file), add = TRUE)
 
-  graphics::par(mar = c(4, 4, 2, 1))
+  local({
+    grDevices::png(
+      filename = file,
+      width = width_px,
+      height = height_px,
+      units = "px",
+      res = 192,
+      bg = "white"
+    )
+    oldpar <- list(mar = graphics::par("mar"))
+    on.exit({
+      graphics::par(oldpar)
+      grDevices::dev.off()
+    }, add = TRUE)
 
-  if (is.function(plot_object)) {
-    plot_object()
-  } else if (inherits(plot_object, "recordedplot")) {
-    grDevices::replayPlot(plot_object)
-  } else {
-    plot(plot_object)
-  }
+    graphics::par(mar = c(4, 4, 2, 1))
 
-  grDevices::dev.off()
-  on.exit(unlink(file), add = FALSE)
+    if (is.function(plot_object)) {
+      plot_object()
+    } else if (inherits(plot_object, "recordedplot")) {
+      grDevices::replayPlot(plot_object)
+    } else {
+      plot(plot_object)
+    }
+  })
 
   png::readPNG(file)
 }

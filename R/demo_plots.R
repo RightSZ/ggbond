@@ -16,8 +16,6 @@ ggbond_demo_plots <- function() {
     stop("Package 'ggplot2' is required.", call. = FALSE)
   }
 
-  set.seed(123)
-
   demo_data <- data.frame(
     sample = paste0("S", seq_len(60)),
     group = rep(c("Control", "Treatment1", "Treatment2"), each = 20),
@@ -146,6 +144,9 @@ ggbond_demo_plots <- function() {
     data <- demo_data
 
     function() {
+      oldpar <- graphics::par(c("mar", "mgp"))
+      on.exit(graphics::par(oldpar), add = TRUE)
+
       graphics::par(mar = c(3, 3, 2, 1), mgp = c(1.8, 0.6, 0))
 
       graphics::plot(
