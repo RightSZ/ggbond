@@ -42,12 +42,6 @@ install.packages("devtools")
 devtools::install_github("RightSZ/ggbond")
 ```
 
-During local development from the package directory:
-
-``` r
-devtools::load_all("ggbond")
-```
-
 ## Quick Start
 
 ``` r
